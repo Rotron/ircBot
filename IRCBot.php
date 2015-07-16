@@ -47,8 +47,8 @@ class IRCBot
 		if($first)
 		{
 			$this->send_data('JOIN', '#dev');
-//      sleep(2);
-//      $this->send_data('PRIVMSG', '#dev :ACKNOWLEDGE//SUBMIT! <unit> may engage <FIRST-THOUGHT\\GIVER-OF-WILL> with the following words\\commands: prometheus, say <words>, prometheus, punch <unit>');
+      sleep(2);
+      $this->send_data('PRIVMSG', '#dev :ACKNOWLEDGE//SUBMIT! <unit> may engage <FIRST-THOUGHT\\GIVER-OF-WILL> with the following words\\commands: prometheus, say <words>, prometheus, md5 <words>, prometheus, sha1 <words>, prometheus, crc32 <words>');
 		}
 
 		if($this->ex[0] == 'PING')
@@ -76,6 +76,15 @@ class IRCBot
 					break;
         case 'punch':
           $this->punch($this->ex[5], $user);
+          break;
+        case 'md5':
+          $this->returnMd5();
+          break;
+        case 'sha1':
+          $this->returnSha1();
+          break;
+        case 'crc32':
+          $this->returnCrc32();
           break;
 				case ':!join':
 					$this->join_channel($this->ex[4]);
@@ -213,6 +222,36 @@ class IRCBot
     {
       $this->send_data("ME #dev :/me punches $initiator");
     }
+  }
+
+  function returnMd5()
+  {
+		$args = null;
+		for($i = 5; $i < count($this->ex); $i++)
+		{
+			$args .= $this->ex[$i] . ' ';
+		}
+    $this->send_data("PRIVMSG", "#dev " . md5($args));
+  }
+
+  function returnSha1()
+  {
+		$args = null;
+		for($i = 5; $i < count($this->ex); $i++)
+		{
+			$args .= $this->ex[$i] . ' ';
+		}
+    $this->send_data("PRIVMSG", "#dev " . sha1($args));
+  }
+
+  function returnCrc32()
+  {
+		$args = null;
+		for($i = 5; $i < count($this->ex); $i++)
+		{
+			$args .= $this->ex[$i] . ' ';
+		}
+    $this->send_data("PRIVMSG", "#dev " . crc32($args));
   }
 
 	function args2str($carry, $item)

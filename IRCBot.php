@@ -216,11 +216,11 @@ class IRCBot
   {
     if($target != "jfranklin")
     {
-      $this->send_data("ME #dev :/me punches $target");
+      $this->send_data("PRIVMSG #dev :\001ACTION punches $target\001");
     }
     else
     {
-      $this->send_data("ME #dev :/me punches $initiator");
+      $this->send_data("PRIVMSG #dev :\001ACTION punches $initiator\001");
     }
   }
 

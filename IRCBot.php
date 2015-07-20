@@ -99,7 +99,7 @@ class IRCBot
             $this->join_channel($this->ex[4]);
             break;
           case 'quit':
-            $this->quit();
+            $this->quit($user);
             break;
           case ':!op':
             $this->op_user();

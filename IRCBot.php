@@ -286,7 +286,7 @@ class IRCBot
     else
     {
       $this->action("#dev", "chuckles");
-      $this->send_data("PRIVMSG jfranklin :$user just tried to make me quit";
+      $this->send_data("PRIVMSG jfranklin :$user just tried to make me quit");
     }
   }
 

@@ -50,31 +50,39 @@ class IRCBot
       echo nl2br($data);
       flush();
       $this->ex = explode(' ', $data);
+      var_dump($this->ex);
 
+      // Plays ping-pong with the server to stay connected.
       if($this->ex[0] == 'PING')
       {
-        $this->send_data('PONG', $this->ex[1]); //Plays ping-pong with the server to stay connected.
+        $this->send_data('PONG', $this->ex[1]);
       }
 
+      // Get the user that issued the last command
       $user = null;
       if(preg_match("/^:(.+)\!/", $this->ex[0], $matches))
       {
         var_dump($matches);
         $user = $matches[1];
       }
-
       echo "--\nUSER: $user\n--\n";
 
+      // Block punches from Jarvis @ jfranklin
       if($user == "jarvis" && isset($this->ex[4]) && $this->ex[4] == "punches" && isset($this->ex[5]) && $this->ex[5] == "jfranklin")
       {
         $this->action("#dev", "blocks $user's punch, and destroys $user with a well-placed laser-blast");
         $this->send_data("PRIVMSG $user :Better luck next time, <$user//metagen//heretic>");
         sleep(1);
-        $this->send_data("PRIVMSG #dev :<unit><$user///dirt-bag> was :destroyed\\\\burs\\\\offlinedt: for >>impudence<< -> ACKNOWLEDGE//SUBMIT!");
+        $this->send_data("PRIVMSG #dev :<unit><$user///dirt-bag> was :destroyed\\\\burst\\\\offlined: for >>impudence<< -> ACKNOWLEDGE//SUBMIT!");
       }
 
-      var_dump($this->ex);
+      // If jfranklin quits, disconnect.
+      if($user == "jfranklin" && $this->ex[1] == "QUIT")
+      {
+        $this->quit($user);
+      }
 
+      // Listen for commands
       if(isset($this->ex[3]) && $this->ex[3] == ":prometheus,")
       {
         $command = str_replace(array(chr(10), chr(13)), '', $this->ex[4]);
@@ -126,12 +134,12 @@ class IRCBot
 		if($msg == null)
 		{
 			fputs($this->socket, $cmd . "\r\n");
-			echo '<strong>' . $cmd . '</strong><br />';
+			echo 'Command' . $cmd . "\n";
 		}
 		else
 		{
 			fputs($this->socket, $cmd . ' ' . $msg . "\r\n");
-			echo '<strong>' . $cmd . ' ' . $msg . '</strong><br />';
+			echo $cmd . ' ' . $msg;
 		}
 	}
 

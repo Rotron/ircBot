@@ -43,7 +43,7 @@ class IRCBot
 
     $this->send_data('JOIN', '#dev');
     sleep(2);
-    $this->send_data('PRIVMSG', '#dev :ACKNOWLEDGE//SUBMIT! <unit> may engage <FIRST-THOUGHT\\GIVER-OF-WILL> with the following words\\commands: prometheus, say <words>, prometheus, md5 <words>, prometheus, sha1 <words>, prometheus, crc32 <words>');
+    //$this->send_data('PRIVMSG', '#dev :ACKNOWLEDGE//SUBMIT! <unit> may engage <FIRST-THOUGHT\\\\GIVER-OF-WILL> with the following words\\\\commands: prometheus, say <words>, prometheus, md5 <words>, prometheus, sha1 <words>, prometheus, crc32 <words>');
 
     while($this->listening === true) {
       $data = fgets($this->socket, 128);

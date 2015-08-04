@@ -17,6 +17,11 @@ class IRCBot
 	//This is going to hold our TCP/IP connection
 	var $socket;
 
+  public $defenses = array(
+    "punches jfranklin in the FACE" => 'blocks %1$s\'s punch, and then cuts %1$s in half with a well-placed laser',
+    "roundhouse kicks  jfranklin in the FACE" => "catches %s's foot, and then incinerates their leg with napalm"
+  );
+
 	//This is going to hold all of the messages both server and client
 	var $ex = array();
 
@@ -62,19 +67,23 @@ class IRCBot
       $user = null;
       if(preg_match("/^:(.+)\!/", $this->ex[0], $matches))
       {
-        var_dump($matches);
         $user = $matches[1];
       }
       echo "--\nUSER: $user\n--\n";
 
-      // Block punches from Jarvis @ jfranklin
-      if($user == "jarvis" && isset($this->ex[4]) && $this->ex[4] == "punches" && isset($this->ex[5]) && $this->ex[5] == "jfranklin")
-      {
-        $this->action("#dev", "blocks $user's punch, and destroys $user with a well-placed laser-blast");
-        $this->send_data("PRIVMSG $user :Better luck next time, <$user//metagen//heretic>");
-        sleep(1);
-        $this->send_data("PRIVMSG #dev :<unit><$user///dirt-bag> was :destroyed\\\\burst\\\\offlined: for >>impudence<< -> ACKNOWLEDGE//SUBMIT!");
-      }
+      // Block attacks from Jarvis @ jfranklin
+     if($user == "jarvis")
+     {
+        $attack = $this->_isAttacking($this->ex);
+        print "\n--------\nATTACK: $attack\n--------\n";
+        if($attack !== false)
+        {
+          $this->defendAgainst($this->ex[2], $user, $attack);
+          $this->send_data("PRIVMSG $user :Better luck next time, <$user//metagen//heretic>");
+          sleep(1);
+          $this->send_data("PRIVMSG #dev :<unit><$user///dirt-bag> was :destroyed\\\\burst\\\\offlined: for >>impudence<< -> ACKNOWLEDGE//SUBMIT!");
+        }
+     }
 
       // If jfranklin quits, disconnect.
       if($user == "jfranklin" && $this->ex[1] == "QUIT")
@@ -302,6 +311,42 @@ class IRCBot
 	{
 		return $carry . " " . $item;
 	}
+
+  // Pass in $this->ex
+  function _isAttacking($attack)
+  {
+    $args = "";
+		for($i = 4; $i < count($this->ex); $i++)
+		{
+			$args .= $attack[$i] . ' ';
+		}
+    // Remove whitespace
+    $attack = trim($args);
+    // Remove unprintable, strange characters
+    $attack = preg_replace('/[\x00-\x1F\x7F]/', '', $attack);
+
+    if(array_key_exists($attack, $this->defenses))
+    {
+      return $attack;
+    }
+    elseif(strpos($attack, "jfranklin") !== false)
+    {
+      file_put_contents("undefended_attacks.txt", $attack . "\n", FILE_APPEND);
+      return false;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  function defendAgainst($channel, $user, $attack)
+  {
+    echo $user;
+    echo $attack;
+    echo $this->defenses[$attack];
+    $this->action($channel, sprintf($this->defenses[$attack], $user));
+  }
 }
 
 $bot = new IRCBot($config);

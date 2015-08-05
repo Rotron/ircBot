@@ -19,7 +19,7 @@ class IRCBot
 
   public $defenses = array(
     "punches jfranklin in the FACE" => 'blocks %1$s\'s punch, and then cuts %1$s in half with a well-placed laser',
-    "roundhouse kicks  jfranklin in the FACE" => "catches %s's foot, and then incinerates their leg with napalm"
+    "roundhouse kicks  jfranklin in the FACE" => "catches %s's foot, and then incinerates his leg with napalm"
   );
 
 	//This is going to hold all of the messages both server and client

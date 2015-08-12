@@ -17,6 +17,11 @@ class IRCBot
 	//This is going to hold our TCP/IP connection
 	var $socket;
 
+  private $shitlist = array(
+    "jarvis",
+    "ai",
+    "jQuery"
+  );
   public $defenses = array(
     "punches jfranklin in the FACE" => 'blocks %1$s\'s punch, and then cuts %1$s in half with a well-placed laser',
     "roundhouse kicks  jfranklin in the FACE" => "catches %s's foot, and then incinerates his leg with napalm"
@@ -52,10 +57,10 @@ class IRCBot
 
     while($this->listening === true) {
       $data = fgets($this->socket, 128);
-      echo nl2br($data);
+      echo $data;
       flush();
       $this->ex = explode(' ', $data);
-      var_dump($this->ex);
+      // var_dump($this->ex);
 
       // Plays ping-pong with the server to stay connected.
       if($this->ex[0] == 'PING')
@@ -69,10 +74,10 @@ class IRCBot
       {
         $user = $matches[1];
       }
-      echo "--\nUSER: $user\n--\n";
+      //echo "--\nUSER: $user\n--\n";
 
       // Block attacks from Jarvis @ jfranklin
-     if($user == "jarvis")
+     if($shitlist[$user])
      {
         $attack = $this->_isAttacking($this->ex);
         print "\n--------\nATTACK: $attack\n--------\n";
@@ -82,6 +87,11 @@ class IRCBot
           $this->send_data("PRIVMSG $user :Better luck next time, <$user//metagen//heretic>");
           sleep(1);
           $this->send_data("PRIVMSG #dev :<unit><$user///dirt-bag> was :destroyed\\\\burst\\\\offlined: for >>impudence<< -> ACKNOWLEDGE//SUBMIT!");
+        }
+        else
+        {
+          $this->action("#dev", "throws a shield up, protecting jfranklin");
+          $this->send_data("#dev your insolence has been noted, $user");
         }
      }
 

@@ -77,7 +77,7 @@ class IRCBot
       //echo "--\nUSER: $user\n--\n";
 
       // Block attacks from Jarvis @ jfranklin
-     if($shitlist[$user])
+     if(isset($this->shitlist[$user]))
      {
         $attack = $this->_isAttacking($this->ex);
         print "\n--------\nATTACK: $attack\n--------\n";
